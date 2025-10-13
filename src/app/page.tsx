@@ -1,103 +1,107 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo } from "react";
+import { useBlock } from "wagmi";
+import { POLYGON_CHAIN_ID, CHAIN_FINALITY_THRESHOLD_MS } from "@/lib/wagmi";
+import { formatTimestamp } from "@/lib/utils";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  
+  // Watch latest and finalized blocks on Polygon with lightweight polling via Wagmi.
+  const latest = useBlock({
+    chainId: POLYGON_CHAIN_ID,
+    blockTag: "latest",
+    watch: { emitMissed: true, poll: true, pollingInterval: 2000 },
+    query: {
+      refetchOnWindowFocus: false,
+      retry: 3,
+      staleTime: 0,
+      // Ensure periodic refresh even if watch does not trigger
+      refetchInterval: 2000,
+      refetchIntervalInBackground: true,
+    },
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  console.log(latest.data?.number?.toString());
+
+  const finalized = useBlock({
+    chainId: POLYGON_CHAIN_ID,
+    blockTag: "finalized",
+    watch: { emitMissed: true, poll: true, pollingInterval: 4000 },
+    query: {
+      refetchOnWindowFocus: false,
+      retry: 3,
+      staleTime: 0,
+      refetchInterval: 4000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const lag = useMemo(() => {
+    const latestTs = latest.data?.timestamp ? Number(latest.data.timestamp) * 1000 : undefined;
+    const finalizedTs = finalized.data?.timestamp ? Number(finalized.data.timestamp) * 1000 : undefined;
+    if (!latestTs || !finalizedTs) return undefined;
+    return latestTs - finalizedTs;
+  }, [latest.data?.timestamp, finalized.data?.timestamp]);
+
+  const thresholdMs = CHAIN_FINALITY_THRESHOLD_MS[POLYGON_CHAIN_ID] ?? 30_000;
+  const isBehindThreshold = typeof lag === "number" && lag > thresholdMs;
+
+  return (
+    <div className="min-h-screen p-6">
+      <h1 className="text-xl font-semibold mb-1">Polygon Blocks</h1>
+      <p className="mb-4 text-sm opacity-70">chainId: {POLYGON_CHAIN_ID}</p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className={`rounded-md border p-4 ${isBehindThreshold ? "border-red-500" : "border-[color:var(--foreground)]/15"}`}>
+          <h2 className="font-mono text-sm mb-2">latest</h2>
+          {latest.isPending ? (
+            <p>Loading…</p>
+          ) : latest.isError ? (
+            <p className="text-red-500">Error: {(latest.error as Error)?.message}</p>
+          ) : (
+            <div className="text-sm">
+              <div>number: {latest.data?.number?.toString()}</div>
+              <div>
+                hash: {latest.data?.hash}
+                {latest.data?.hash && (
+                  <>
+                    {" "}
+                    <a className="underline" target="_blank" rel="noreferrer" href={`https://polygonscan.com/block/${latest.data?.number?.toString()}`}>view on PolygonScan</a>
+                  </>
+                )}
+              </div>
+              <div>timestamp: {formatTimestamp(latest.data?.timestamp as bigint | undefined)}</div>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className={`rounded-md border p-4 ${isBehindThreshold ? "border-red-500" : "border-[color:var(--foreground)]/15"}`}>
+          <h2 className="font-mono text-sm mb-2">finalized</h2>
+          {finalized.isPending ? (
+            <p>Loading…</p>
+          ) : finalized.isError ? (
+            <p className="text-red-500">Error: {(finalized.error as Error)?.message}</p>
+          ) : (
+            <div className="text-sm">
+              <div>number: {finalized.data?.number?.toString()}</div>
+              <div>
+                hash: {finalized.data?.hash}
+                {finalized.data?.hash && (
+                  <>
+                    {" "}
+                    <a className="underline" target="_blank" rel="noreferrer" href={`https://polygonscan.com/block/${finalized.data?.number?.toString()}`}>view on PolygonScan</a>
+                  </>
+                )}
+              </div>
+              <div>timestamp: {formatTimestamp(finalized.data?.timestamp as bigint | undefined)}</div>
+            </div>
+          )}
+        </div>
+      </div>
+      {typeof lag === "number" && (
+        <p className={`mt-4 text-sm ${isBehindThreshold ? "text-red-500" : "opacity-70"}`}>
+          Lag between latest and finalized: {Math.round(lag / 1000)}s (threshold: {Math.round(thresholdMs / 1000)}s)
+        </p>
+      )}
     </div>
   );
 }
