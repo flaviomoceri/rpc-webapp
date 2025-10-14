@@ -1,107 +1,80 @@
 "use client";
-
-import { useMemo } from "react";
-import { useBlock } from "wagmi";
-import { POLYGON_CHAIN_ID, CHAIN_FINALITY_THRESHOLD_MS } from "@/lib/wagmi";
-import { formatTimestamp } from "@/lib/utils";
+import { useState } from "react";
+import { CHAIN_CONFIGS } from "@/lib";
+import { H1, P, ChainSection, Container } from "@/components";
 
 export default function Home() {
-  
-  // Watch latest and finalized blocks on Polygon with lightweight polling via Wagmi.
-  const latest = useBlock({
-    chainId: POLYGON_CHAIN_ID,
-    blockTag: "latest",
-    watch: { emitMissed: true, poll: true, pollingInterval: 2000 },
-    query: {
-      refetchOnWindowFocus: false,
-      retry: 3,
-      staleTime: 0,
-      // Ensure periodic refresh even if watch does not trigger
-      refetchInterval: 2000,
-      refetchIntervalInBackground: true,
-    },
-  });
+  const [statusByChain, setStatusByChain] = useState<
+    Record<string, "healthy" | "lag" | "error">
+  >({});
 
-  console.log(latest.data?.number?.toString());
+  function handleStatusChange(
+    status: "healthy" | "lag" | "error",
+    chainName: string
+  ) {
+    setStatusByChain((prev) =>
+      prev[chainName] === status ? prev : { ...prev, [chainName]: status }
+    );
+  }
 
-  const finalized = useBlock({
-    chainId: POLYGON_CHAIN_ID,
-    blockTag: "finalized",
-    watch: { emitMissed: true, poll: true, pollingInterval: 4000 },
-    query: {
-      refetchOnWindowFocus: false,
-      retry: 3,
-      staleTime: 0,
-      refetchInterval: 4000,
-      refetchIntervalInBackground: true,
-    },
-  });
-
-  const lag = useMemo(() => {
-    const latestTs = latest.data?.timestamp ? Number(latest.data.timestamp) * 1000 : undefined;
-    const finalizedTs = finalized.data?.timestamp ? Number(finalized.data.timestamp) * 1000 : undefined;
-    if (!latestTs || !finalizedTs) return undefined;
-    return latestTs - finalizedTs;
-  }, [latest.data?.timestamp, finalized.data?.timestamp]);
-
-  const thresholdMs = CHAIN_FINALITY_THRESHOLD_MS[POLYGON_CHAIN_ID] ?? 30_000;
-  const isBehindThreshold = typeof lag === "number" && lag > thresholdMs;
+  const laggingChains = Object.entries(statusByChain)
+    .filter(([, s]) => s === "lag")
+    .map(([name]) => name);
+  const errorChains = Object.entries(statusByChain)
+    .filter(([, s]) => s === "error")
+    .map(([name]) => name);
+  const allReported =
+    Object.keys(statusByChain).length === CHAIN_CONFIGS.length;
+  const allHealthy =
+    allReported && laggingChains.length === 0 && errorChains.length === 0;
 
   return (
-    <div className="min-h-screen p-6">
-      <h1 className="text-xl font-semibold mb-1">Polygon Blocks</h1>
-      <p className="mb-4 text-sm opacity-70">chainId: {POLYGON_CHAIN_ID}</p>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className={`rounded-md border p-4 ${isBehindThreshold ? "border-red-500" : "border-[color:var(--foreground)]/15"}`}>
-          <h2 className="font-mono text-sm mb-2">latest</h2>
-          {latest.isPending ? (
-            <p>Loading…</p>
-          ) : latest.isError ? (
-            <p className="text-red-500">Error: {(latest.error as Error)?.message}</p>
-          ) : (
-            <div className="text-sm">
-              <div>number: {latest.data?.number?.toString()}</div>
-              <div>
-                hash: {latest.data?.hash}
-                {latest.data?.hash && (
-                  <>
-                    {" "}
-                    <a className="underline" target="_blank" rel="noreferrer" href={`https://polygonscan.com/block/${latest.data?.number?.toString()}`}>view on PolygonScan</a>
-                  </>
-                )}
-              </div>
-              <div>timestamp: {formatTimestamp(latest.data?.timestamp as bigint | undefined)}</div>
-            </div>
-          )}
-        </div>
-        <div className={`rounded-md border p-4 ${isBehindThreshold ? "border-red-500" : "border-[color:var(--foreground)]/15"}`}>
-          <h2 className="font-mono text-sm mb-2">finalized</h2>
-          {finalized.isPending ? (
-            <p>Loading…</p>
-          ) : finalized.isError ? (
-            <p className="text-red-500">Error: {(finalized.error as Error)?.message}</p>
-          ) : (
-            <div className="text-sm">
-              <div>number: {finalized.data?.number?.toString()}</div>
-              <div>
-                hash: {finalized.data?.hash}
-                {finalized.data?.hash && (
-                  <>
-                    {" "}
-                    <a className="underline" target="_blank" rel="noreferrer" href={`https://polygonscan.com/block/${finalized.data?.number?.toString()}`}>view on PolygonScan</a>
-                  </>
-                )}
-              </div>
-              <div>timestamp: {formatTimestamp(finalized.data?.timestamp as bigint | undefined)}</div>
-            </div>
-          )}
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="bg-white border-b border-gray-200">
+        <Container>
+          <H1>
+            RPC <span className="text-primary">Monitor</span>
+          </H1>
+          <P className="max-w-2xl">
+            Real-time monitoring of blockchain RPC endpoints with comprehensive
+            health status tracking
+          </P>
+        </Container>
       </div>
-      {typeof lag === "number" && (
-        <p className={`mt-4 text-sm ${isBehindThreshold ? "text-red-500" : "opacity-70"}`}>
-          Lag between latest and finalized: {Math.round(lag / 1000)}s (threshold: {Math.round(thresholdMs / 1000)}s)
-        </p>
-      )}
+
+      {/* Main Content */}
+      <Container>
+        <div className="mb-4">
+          {allHealthy ? (
+            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-secondary text-primary text-sm font-medium">
+              ✓ All chains healthy
+            </div>
+          ) : (
+            <div className="flex flex-col md:flex-row gap-2">
+              {errorChains.length > 0 && (
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-red-100 text-red-800 text-sm font-medium">
+                  ✗ Errors: {errorChains.join(", ")}
+                </div>
+              )}
+              {laggingChains.length > 0 && (
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-yellow-100 text-yellow-800 text-sm font-medium">
+                  ⚠ Lagging: {laggingChains.join(", ")}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="space-y-3">
+          {CHAIN_CONFIGS.map((config) => (
+            <ChainSection
+              key={config.chainId}
+              config={config}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </div>
+      </Container>
     </div>
   );
 }
