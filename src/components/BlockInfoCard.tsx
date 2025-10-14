@@ -18,19 +18,19 @@ export function BlockInfoCard({
   formatTs,
 }: BlockInfoCardProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="bg-white rounded-md border border-gray-200 p-4">
+      <div className="flex items-center gap-2 mb-2">
         <div className={`w-2 h-2 rounded-full ${dotColorClass}`}></div>
-        <h5 className="font-semibold text-gray-900">{title}</h5>
+        <h5 className="font-semibold text-gray-900 text-sm">{title}</h5>
       </div>
-      <div className="space-y-2">
-        <div className="text-2xl font-bold text-gray-900">
+      <div className="space-y-1.5">
+        <div className="text-xl font-bold text-gray-900 leading-tight">
           #{number?.toString() ?? "—"}
         </div>
-        <div className="text-sm text-gray-600">{formatTs(timestamp)}</div>
+        <div className="text-xs text-gray-600">{formatTs(timestamp)}</div>
         {explorerPrefix && number && (
           <a
-            className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary-dark transition-colors"
             href={`${explorerPrefix}${number.toString()}`}
             target="_blank"
             rel="noreferrer"
