@@ -109,7 +109,6 @@ export function ChainSection({
             }
           })
         );
-        console.log("results", results);
         if (!cancelled) setRpcSamples(results);
       } catch (e) {
         console.error("batch failure", e);
