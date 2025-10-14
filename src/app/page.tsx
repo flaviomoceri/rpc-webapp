@@ -36,7 +36,7 @@ export default function Home() {
           <H1>
             RPC <span className="text-primary">Monitor</span>
           </H1>
-          <P className="max-w-2xl">
+          <P>
             Real-time monitoring of blockchain RPC endpoints with comprehensive
             health status tracking
           </P>
