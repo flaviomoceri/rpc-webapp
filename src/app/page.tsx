@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { CHAIN_CONFIGS } from "@/lib";
-import { H1, P, ChainSection, Container } from "@/components";
+import { ChainSection, Container } from "@/components";
 
 export default function Home() {
   const [statusByChain, setStatusByChain] = useState<
@@ -30,42 +30,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200">
-        <Container>
-          <H1>
-            RPC <span className="text-primary">Monitor</span>
-          </H1>
-          <P>
-            Real-time monitoring of blockchain RPC endpoints with comprehensive
-            health status tracking
-          </P>
-        </Container>
-      </div>
-
       {/* Main Content */}
       <Container>
-        <div className="mb-4">
+        <div className="mb-2">
           {allHealthy ? (
-            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-secondary text-primary text-sm font-medium">
+            <div className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded bg-secondary text-primary text-xs font-medium">
               ✓ All chains healthy
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-2">
+            <div className="flex flex-col md:flex-row gap-1.5">
               {errorChains.length > 0 && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-red-100 text-red-800 text-sm font-medium">
+                <div className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded bg-red-100 text-red-800 text-xs font-medium">
                   ✗ Errors: {errorChains.join(", ")}
                 </div>
               )}
               {laggingChains.length > 0 && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-yellow-100 text-yellow-800 text-sm font-medium">
+                <div className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded bg-yellow-100 text-yellow-800 text-xs font-medium">
                   ⚠ Lagging: {laggingChains.join(", ")}
                 </div>
               )}
             </div>
           )}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-1">
           {CHAIN_CONFIGS.map((config) => (
             <ChainSection
               key={config.chainId}

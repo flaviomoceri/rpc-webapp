@@ -1,4 +1,3 @@
-export * from "./BlockInfoCard";
 export * from "./ChainSection";
 export * from "./Container";
 export * from "./Icons";

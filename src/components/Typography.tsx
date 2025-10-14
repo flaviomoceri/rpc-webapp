@@ -7,7 +7,7 @@ type TypographyProps = React.HTMLAttributes<
 export function H1({ children, className, ...rest }: TypographyProps) {
   return (
     <h1
-      className={`text-4xl font-bold text-black mb-2 ${className ?? ""}`}
+      className={`text-2xl font-bold text-black mb-1 ${className ?? ""}`}
       {...rest}
     >
       {children}
@@ -18,7 +18,7 @@ export function H1({ children, className, ...rest }: TypographyProps) {
 export function H3({ children, className, ...rest }: TypographyProps) {
   return (
     <h3
-      className={`text-xl font-semibold text-gray-900 ${className ?? ""}`}
+      className={`text-base font-semibold text-gray-900 ${className ?? ""}`}
       {...rest}
     >
       {children}
@@ -29,7 +29,7 @@ export function H3({ children, className, ...rest }: TypographyProps) {
 export function H4({ children, className, ...rest }: TypographyProps) {
   return (
     <h4
-      className={`text-lg font-semibold text-gray-900 ${className ?? ""}`}
+      className={`text-sm font-semibold text-gray-900 ${className ?? ""}`}
       {...rest}
     >
       {children}
@@ -39,7 +39,7 @@ export function H4({ children, className, ...rest }: TypographyProps) {
 
 export function P({ children, className, ...rest }: TypographyProps) {
   return (
-    <p className={`text-base text-gray ${className ?? ""}`} {...rest}>
+    <p className={`text-sm text-gray ${className ?? ""}`} {...rest}>
       {children}
     </p>
   );

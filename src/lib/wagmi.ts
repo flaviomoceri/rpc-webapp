@@ -8,7 +8,7 @@ import { fallback, http, type Chain, type Transport } from "viem";
 // Docs/Refs: https://plasma.drpc.org
 const plasma: Chain = {
   id: 9745,
-  name: "Plasma Mainnet",
+  name: "Plasma",
   nativeCurrency: { name: "XPL", symbol: "XPL", decimals: 18 },
   rpcUrls: {
     default: { http: ["https://plasma.drpc.org", "https://rpc.plasma.to"] },
