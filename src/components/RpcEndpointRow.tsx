@@ -1,4 +1,10 @@
-import { formatTimestamp } from "@/lib";
+import {
+  formatTimestamp,
+  getStatusBorderClass,
+  getStatusDotClass,
+  type Status,
+} from "@/lib";
+import { BlockNumber } from "@/components";
 
 type EndpointData = {
   url: string;
@@ -23,24 +29,10 @@ export function RpcEndpointRow({
   referenceTsMs,
 }: RpcEndpointRowProps) {
   const hasError = !!data.error;
-  const status: "healthy" | "lag" | "error" = hasError
-    ? "error"
-    : overThreshold
-    ? "lag"
-    : "healthy";
+  const status: Status = hasError ? "error" : overThreshold ? "lag" : "healthy";
 
-  const containerBorderClass =
-    status === "healthy"
-      ? "border-green-200"
-      : status === "lag"
-      ? "border-yellow-200"
-      : "border-red-200";
-  const statusDotClass =
-    status === "healthy"
-      ? "bg-primary"
-      : status === "lag"
-      ? "bg-yellow-500"
-      : "bg-red-500";
+  const containerBorderClass = getStatusBorderClass(status);
+  const statusDotClass = getStatusDotClass(status);
 
   return (
     <div className={`bg-white rounded-md border p-3 ${containerBorderClass}`}>
@@ -53,51 +45,21 @@ export function RpcEndpointRow({
         </div>
 
         <div className="lg:col-span-1">
-          <div>
-            <div className="text-xs font-bold text-gray-900">
-              {hasError || !data.latest?.number ? (
-                <>#—</>
-              ) : explorerPrefix ? (
-                <a
-                  className="hover:text-primary transition-colors"
-                  href={`${explorerPrefix}${data.latest.number.toString()}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  #{data.latest.number.toString()}
-                </a>
-              ) : (
-                <>#{data.latest.number.toString()}</>
-              )}
-            </div>
-            <div className="text-[10px] text-gray-600">
-              {hasError ? "" : formatTimestamp(data.latest?.timestamp)}
-            </div>
-          </div>
+          <BlockNumber
+            number={data.latest?.number}
+            timestamp={data.latest?.timestamp}
+            hasError={hasError}
+            explorerPrefix={explorerPrefix}
+          />
         </div>
 
         <div className="lg:col-span-1">
-          <div>
-            <div className="text-xs font-bold text-gray-900">
-              {hasError || !data.finalized?.number ? (
-                <>#—</>
-              ) : explorerPrefix ? (
-                <a
-                  className="hover:text-primary transition-colors"
-                  href={`${explorerPrefix}${data.finalized.number.toString()}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  #{data.finalized.number.toString()}
-                </a>
-              ) : (
-                <>#{data.finalized.number.toString()}</>
-              )}
-            </div>
-            <div className="text-[10px] text-gray-600">
-              {hasError ? "" : formatTimestamp(data.finalized?.timestamp)}
-            </div>
-          </div>
+          <BlockNumber
+            number={data.finalized?.number}
+            timestamp={data.finalized?.timestamp}
+            hasError={hasError}
+            explorerPrefix={explorerPrefix}
+          />
         </div>
 
         <div className="lg:col-span-1">

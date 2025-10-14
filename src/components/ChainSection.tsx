@@ -10,6 +10,10 @@ import {
   computeChainStatus,
   computeLagToRefSeconds,
   getReferenceTimestampMs,
+  getStatusDotClass,
+  getStatusTextClass,
+  getStatusLabel,
+  type Status,
 } from "@/lib";
 import { ChevronDownIcon, RpcEndpointRow } from "@/components";
 
@@ -27,10 +31,7 @@ export function ChainSection({
   onStatusChange,
 }: {
   config: ChainConfig;
-  onStatusChange?: (
-    status: "healthy" | "lag" | "error",
-    chainName: string
-  ) => void;
+  onStatusChange?: (status: Status, chainName: string) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const {
@@ -100,7 +101,7 @@ export function ChainSection({
     [rpcSamples]
   );
 
-  const chainStatus: "healthy" | "lag" | "error" = useMemo(
+  const chainStatus: Status = useMemo(
     () => computeChainStatus(rpcSamples, referenceTsMs, thresholdMs),
     [rpcSamples, referenceTsMs, thresholdMs]
   );
@@ -109,23 +110,9 @@ export function ChainSection({
     if (onStatusChange) onStatusChange(chainStatus, chain.name);
   }, [chainStatus, chain.name, onStatusChange]);
 
-  const statusDotClass = useMemo(() => {
-    if (chainStatus === "healthy") return "bg-primary";
-    if (chainStatus === "lag") return "bg-yellow-500";
-    return "bg-red-500";
-  }, [chainStatus]);
-
-  const statusTextClass = useMemo(() => {
-    if (chainStatus === "healthy") return "text-primary";
-    if (chainStatus === "lag") return "text-yellow-600";
-    return "text-red-600";
-  }, [chainStatus]);
-
-  const statusLabel = useMemo(() => {
-    if (chainStatus === "healthy") return "Healthy";
-    if (chainStatus === "lag") return "Lagging";
-    return "Error";
-  }, [chainStatus]);
+  const statusDotClass = getStatusDotClass(chainStatus);
+  const statusTextClass = getStatusTextClass(chainStatus);
+  const statusLabel = getStatusLabel(chainStatus);
 
   return (
     <div className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
