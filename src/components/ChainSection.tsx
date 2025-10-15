@@ -2,11 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { createPublicClient, http } from "viem";
 
 import {
-  CHAINS,
-  CHAIN_CONFIGS,
   computeChainStatus,
   computeLagToRefSeconds,
   getReferenceTimestampMs,
@@ -14,25 +11,12 @@ import {
   getStatusTextClass,
   getStatusLabel,
   type Status,
+  type ChainSectionProps,
 } from "@/lib";
-import { ChevronDownIcon, RpcEndpointRow } from "@/components";
+import { useRpcMonitoring } from "@/hooks";
+import { ChevronDownIcon, RpcEndpointRow, H3, Small, Tiny } from "@/components";
 
-type ChainConfig = (typeof CHAIN_CONFIGS)[number];
-
-type RpcSample = {
-  url: string;
-  latest?: { number?: bigint; timestamp?: bigint };
-  finalized?: { number?: bigint; timestamp?: bigint };
-  error?: string;
-};
-
-export function ChainSection({
-  config,
-  onStatusChange,
-}: {
-  config: ChainConfig;
-  onStatusChange?: (status: Status, chainName: string) => void;
-}) {
+export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const {
     chainId,
@@ -44,57 +28,7 @@ export function ChainSection({
     iconAlt,
   } = config;
 
-  const [rpcSamples, setRpcSamples] = useState<RpcSample[]>(() =>
-    rpcUrls.map((url) => ({ url }))
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-    const chainRef = CHAINS.find((c) => c.id === chainId)!;
-    const clients = rpcUrls.map((url) => ({
-      url,
-      client: createPublicClient({ chain: chainRef, transport: http(url) }),
-    }));
-
-    async function tick() {
-      try {
-        const results = await Promise.all(
-          clients.map(async ({ url, client }) => {
-            try {
-              const [latestBlock, finalizedBlock] = await Promise.all([
-                client.getBlock({ blockTag: "latest" }),
-                client.getBlock({ blockTag: "finalized" }),
-              ]);
-              return {
-                url,
-                latest: {
-                  number: latestBlock.number,
-                  timestamp: latestBlock.timestamp,
-                },
-                finalized: {
-                  number: finalizedBlock.number,
-                  timestamp: finalizedBlock.timestamp,
-                },
-              } as RpcSample;
-            } catch (e) {
-              const message = e instanceof Error ? e.message : String(e);
-              return { url, error: message } as RpcSample;
-            }
-          })
-        );
-        if (!cancelled) setRpcSamples(results);
-      } catch (e) {
-        console.error("batch failure", e);
-      }
-    }
-
-    tick();
-    const id = setInterval(tick, 3000);
-    return () => {
-      cancelled = true;
-      clearInterval(id);
-    };
-  }, [chainId, rpcUrls]);
+  const rpcSamples = useRpcMonitoring(chainId, rpcUrls);
 
   const referenceTsMs = useMemo(
     () => getReferenceTimestampMs(rpcSamples),
@@ -132,16 +66,10 @@ export function ChainSection({
               />
             </div>
             <div className="flex flex-col gap-0.5 md:flex-row md:gap-3">
-              <h3 className="text-base font-semibold text-gray-900">
-                {chain.name}
-              </h3>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-0 md:gap-2 ">
-                <span className="text-xs text-gray-500">
-                  {rpcUrls.length} RPCs
-                </span>
-                <span className="text-xs text-gray-500">
-                  Threshold: {Math.round(thresholdMs / 1000)}s
-                </span>
+              <H3>{chain.name}</H3>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2 ">
+                <Small>{rpcUrls.length} RPCs</Small>
+                <Small>Threshold: {Math.round(thresholdMs / 1000)}s</Small>
               </div>
             </div>
           </div>
@@ -167,10 +95,10 @@ export function ChainSection({
         <div className="border-t border-gray-200 bg-gray-50 p-3">
           <div className="space-y-2">
             <div className="hidden lg:grid grid-cols-4 gap-3 px-3 text-[11px] text-gray-500">
-              <div>Endpoint</div>
-              <div>Latest Block</div>
-              <div>Finalized Block</div>
-              <div>Performance</div>
+              <Tiny>Endpoint</Tiny>
+              <Tiny>Latest Block</Tiny>
+              <Tiny>Finalized Block</Tiny>
+              <Tiny>Performance</Tiny>
             </div>
             <div>
               <div className="space-y-2">

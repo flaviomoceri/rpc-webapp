@@ -1,11 +1,5 @@
-import { formatTimestamp } from "@/lib";
-
-type BlockNumberProps = {
-  number?: bigint;
-  timestamp?: bigint;
-  hasError: boolean;
-  explorerPrefix?: string;
-};
+import { formatTimestamp, type BlockNumberProps } from "@/lib";
+import { Small, Tiny } from "@/components";
 
 export function BlockNumber({
   number,
@@ -15,7 +9,7 @@ export function BlockNumber({
 }: BlockNumberProps) {
   return (
     <div>
-      <div className="text-xs font-bold text-gray-900">
+      <Small className="font-bold text-gray-900">
         {hasError || !number ? (
           <>#—</>
         ) : explorerPrefix ? (
@@ -30,10 +24,8 @@ export function BlockNumber({
         ) : (
           <>#{number.toString()}</>
         )}
-      </div>
-      <div className="text-[10px] text-gray-600">
-        {hasError ? "" : formatTimestamp(timestamp)}
-      </div>
+      </Small>
+      <Tiny>{hasError ? "" : formatTimestamp(timestamp)}</Tiny>
     </div>
   );
 }

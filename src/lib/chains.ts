@@ -1,0 +1,36 @@
+import { polygon, plasma } from "viem/chains";
+import { type Chain } from "viem";
+
+// Unified chain configuration
+export const chain = {
+  polygon: {
+    chainId: polygon.id,
+    chain: polygon,
+    rpcUrls: [
+      "https://polygon-bor.publicnode.com",
+      "https://polygon-rpc.com",
+      "https://1rpc.io/matic",
+    ],
+    thresholdMs: 30_000,
+    explorerPrefix: "https://polygonscan.com/block/",
+    iconUrl: "https://icons-ckg.pages.dev/lz-dark/networks/polygon.svg",
+    iconAlt: "Polygon",
+  },
+  plasma: {
+    chainId: plasma.id,
+    chain: plasma,
+    rpcUrls: ["https://plasma.drpc.org", "https://rpc.plasma.to"],
+    thresholdMs: 10_000,
+    explorerPrefix: "https://plasmascan.to/block/",
+    iconUrl: "https://s2.coinmarketcap.com/static/img/coins/200x200/36645.png",
+    iconAlt: "Plasma",
+  },
+} as const;
+
+// Array of chain configurations for easy mapping
+export const CHAIN_CONFIGS = Object.values(chain);
+
+// Export chains array for viem clients (extracted from configs)
+export const CHAINS = CHAIN_CONFIGS.map(
+  (config) => config.chain
+) as readonly Chain[];

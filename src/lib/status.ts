@@ -1,4 +1,4 @@
-export type Status = "healthy" | "lag" | "error";
+import { type Status } from "@/lib";
 
 export function getStatusDotClass(status: Status): string {
   switch (status) {

@@ -2,24 +2,10 @@ import {
   formatTimestamp,
   getStatusBorderClass,
   getStatusDotClass,
+  type RpcEndpointRowProps,
   type Status,
 } from "@/lib";
-import { BlockNumber } from "@/components";
-
-type EndpointData = {
-  url: string;
-  latest?: { number?: bigint; timestamp?: bigint };
-  finalized?: { number?: bigint; timestamp?: bigint };
-  error?: string;
-};
-
-type RpcEndpointRowProps = {
-  data: EndpointData;
-  explorerPrefix?: string;
-  lagToRefSeconds?: number;
-  overThreshold: boolean;
-  referenceTsMs?: number;
-};
+import { BlockNumber, H4, Tiny } from "@/components";
 
 export function RpcEndpointRow({
   data,
@@ -64,9 +50,9 @@ export function RpcEndpointRow({
 
         <div className="lg:col-span-1">
           {hasError ? (
-            <div className="text-red-600 text-xs">
-              <div className="font-medium">Error</div>
-              <div className="text-[10px] mt-1">{data.error}</div>
+            <div>
+              <H4 className="text-red-600">Error</H4>
+              <Tiny className="text-red-600">{data.error}</Tiny>
             </div>
           ) : (
             <div>
@@ -80,10 +66,10 @@ export function RpcEndpointRow({
                 </div>
               )}
               {typeof referenceTsMs === "number" && (
-                <div className="text-[10px] text-gray-500">
+                <Tiny className="text-gray-500">
                   Ref:{" "}
                   {formatTimestamp(BigInt(Math.floor(referenceTsMs / 1000)))}
-                </div>
+                </Tiny>
               )}
             </div>
           )}

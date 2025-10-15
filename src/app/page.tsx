@@ -16,14 +16,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Main Content */}
       <Container>
+        {/* Status Summary */}
         <div className="mb-2">
           <StatusSummary
             statusByChain={statusByChain}
             totalChains={CHAIN_CONFIGS.length}
           />
         </div>
+
+        {/* Chain Sections */}
         <div className="space-y-1">
           {CHAIN_CONFIGS.map((config) => (
             <ChainSection

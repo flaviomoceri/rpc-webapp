@@ -1,8 +1,4 @@
-type TypographyProps = React.HTMLAttributes<
-  HTMLHeadingElement | HTMLParagraphElement
-> & {
-  children: React.ReactNode;
-};
+import { type TypographyProps } from "@/lib";
 
 export function H1({ children, className, ...rest }: TypographyProps) {
   return (
@@ -40,6 +36,22 @@ export function H4({ children, className, ...rest }: TypographyProps) {
 export function P({ children, className, ...rest }: TypographyProps) {
   return (
     <p className={`text-sm text-gray ${className ?? ""}`} {...rest}>
+      {children}
+    </p>
+  );
+}
+
+export function Small({ children, className, ...rest }: TypographyProps) {
+  return (
+    <p className={`text-xs text-gray-500 ${className ?? ""}`} {...rest}>
+      {children}
+    </p>
+  );
+}
+
+export function Tiny({ children, className, ...rest }: TypographyProps) {
+  return (
+    <p className={`text-[10px] text-gray-600 ${className ?? ""}`} {...rest}>
       {children}
     </p>
   );
