@@ -18,17 +18,10 @@ import { ChevronDownIcon, RpcEndpointRow, H3, Small, Tiny } from "@/components";
 
 export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const {
-    chainId,
-    chain,
-    thresholdMs,
-    explorerPrefix,
-    rpcUrls,
-    iconUrl,
-    iconAlt,
-  } = config;
+  const { chain, thresholdMs, explorerPrefix, rpcUrls, iconUrl, iconAlt } =
+    config;
 
-  const rpcSamples = useRpcMonitoring(chainId, rpcUrls);
+  const rpcSamples = useRpcMonitoring(chain.id, rpcUrls);
 
   const referenceTsMs = useMemo(
     () => getReferenceTimestampMs(rpcSamples),

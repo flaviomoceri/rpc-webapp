@@ -5,7 +5,6 @@ export type Status = "healthy" | "lag" | "error";
 
 // Chain configuration types
 export type ChainConfig = {
-  chainId: number;
   chain: Chain;
   rpcUrls: readonly string[];
   thresholdMs: number;

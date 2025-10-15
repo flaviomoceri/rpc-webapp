@@ -29,7 +29,7 @@ export default function Home() {
         <div className="space-y-1">
           {CHAIN_CONFIGS.map((config) => (
             <ChainSection
-              key={config.chainId}
+              key={config.chain.id}
               config={config}
               onStatusChange={handleStatusChange}
             />

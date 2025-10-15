@@ -4,7 +4,6 @@ import { type Chain } from "viem";
 // Unified chain configuration
 export const chain = {
   polygon: {
-    chainId: polygon.id,
     chain: polygon,
     rpcUrls: [
       "https://polygon-bor.publicnode.com",
@@ -12,16 +11,15 @@ export const chain = {
       "https://1rpc.io/matic",
     ],
     thresholdMs: 30_000,
-    explorerPrefix: "https://polygonscan.com/block/",
+    explorerPrefix: `${polygon.blockExplorers.default.url}/block/`,
     iconUrl: "https://icons-ckg.pages.dev/lz-dark/networks/polygon.svg",
     iconAlt: "Polygon",
   },
   plasma: {
-    chainId: plasma.id,
     chain: plasma,
     rpcUrls: ["https://plasma.drpc.org", "https://rpc.plasma.to"],
     thresholdMs: 10_000,
-    explorerPrefix: "https://plasmascan.to/block/",
+    explorerPrefix: `${plasma.blockExplorers.default.url}/block/`,
     iconUrl: "https://s2.coinmarketcap.com/static/img/coins/200x200/36645.png",
     iconAlt: "Plasma",
   },
