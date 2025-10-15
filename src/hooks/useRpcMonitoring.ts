@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPublicClient, http } from "viem";
-import { CHAINS } from "@/lib";
-
-export type RpcSample = {
-  url: string;
-  latest?: { number?: bigint; timestamp?: bigint };
-  finalized?: { number?: bigint; timestamp?: bigint };
-  error?: string;
-};
+import { CHAINS, type RpcSample } from "@/lib";
 
 export function useRpcMonitoring(
   chainId: number,

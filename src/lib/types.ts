@@ -54,3 +54,31 @@ export type TypographyProps = React.HTMLAttributes<
 > & {
   children: React.ReactNode;
 };
+
+// RPC monitoring types (from utils.ts and hooks)
+export type RpcBlock = {
+  number?: bigint;
+  timestamp?: bigint;
+};
+
+export type RpcSampleLike = {
+  latest?: RpcBlock;
+  error?: string;
+};
+
+export type RpcSample = {
+  url: string;
+  latest?: { number?: bigint; timestamp?: bigint };
+  finalized?: { number?: bigint; timestamp?: bigint };
+  error?: string;
+};
+
+// Component prop types (from components)
+export type IconProps = {
+  className?: string;
+};
+
+export type ContainerProps = {
+  children: React.ReactNode;
+  className?: string;
+};

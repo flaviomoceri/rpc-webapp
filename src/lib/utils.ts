@@ -1,3 +1,5 @@
+import { type RpcSampleLike } from "./types";
+
 export function formatTimestamp(ts?: bigint | number): string {
   if (!ts && ts !== 0) return "—";
   const seconds = typeof ts === "bigint" ? Number(ts) : ts;
@@ -14,16 +16,6 @@ export function formatTimestamp(ts?: bigint | number): string {
   const diffSec = Math.max(0, Math.round((Date.now() - ms) / 1000));
   return `${absolute} (${diffSec}s ago)`;
 }
-
-export type RpcBlock = {
-  number?: bigint;
-  timestamp?: bigint;
-};
-
-export type RpcSampleLike = {
-  latest?: RpcBlock;
-  error?: string;
-};
 
 export function getReferenceTimestampMs(
   samples: RpcSampleLike[]

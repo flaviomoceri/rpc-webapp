@@ -1,6 +1,4 @@
-type IconProps = {
-  className?: string;
-};
+import { type IconProps } from "@/lib";
 
 export function ExternalLinkIcon({ className }: IconProps) {
   return (
