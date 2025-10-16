@@ -8,6 +8,7 @@ export type ChainConfig = {
   chain: Chain;
   rpcUrls: readonly string[];
   thresholdMs: number;
+  maxBlocksBehind?: number;
   explorerPrefix: string;
   iconUrl: string;
   iconAlt: string;
@@ -26,7 +27,7 @@ export type RpcEndpointRowProps = {
   explorerPrefix?: string;
   lagToRefSeconds?: number;
   overThreshold: boolean;
-  referenceTsMs?: number;
+  referenceBlockNumber?: bigint;
 };
 
 // Component prop types

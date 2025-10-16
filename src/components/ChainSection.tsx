@@ -7,6 +7,7 @@ import {
   computeChainStatus,
   computeLagToRefSeconds,
   getReferenceTimestampMs,
+  getReferenceBlockNumber,
   getStatusDotClass,
   getStatusTextClass,
   getStatusLabel,
@@ -18,7 +19,7 @@ import { ChevronDownIcon, RpcEndpointRow, H3, Small, Tiny } from "@/components";
 
 export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { chain, thresholdMs, explorerPrefix, rpcUrls, iconUrl, iconAlt } =
+  const { chain, thresholdMs, maxBlocksBehind, explorerPrefix, rpcUrls, iconUrl, iconAlt } =
     config;
 
   const rpcSamples = useRpcMonitoring(chain.id, rpcUrls);
@@ -28,9 +29,15 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
     [rpcSamples]
   );
 
+  const referenceBlockNumber = useMemo(
+    () => getReferenceBlockNumber(rpcSamples),
+    [rpcSamples]
+  );
+
+
   const chainStatus: Status = useMemo(
-    () => computeChainStatus(rpcSamples, referenceTsMs, thresholdMs),
-    [rpcSamples, referenceTsMs, thresholdMs]
+    () => computeChainStatus(rpcSamples, referenceTsMs, thresholdMs, maxBlocksBehind),
+    [rpcSamples, referenceTsMs, thresholdMs, maxBlocksBehind]
   );
 
   useEffect(() => {
@@ -63,6 +70,9 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
               <div className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2 ">
                 <Small>{rpcUrls.length} RPCs</Small>
                 <Small>Threshold: {Math.round(thresholdMs / 1000)}s</Small>
+                {typeof maxBlocksBehind === "number" && (
+                  <Small>Blocks threshold: {maxBlocksBehind}</Small>
+                )}
               </div>
             </div>
           </div>
@@ -87,10 +97,11 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
       {isExpanded && (
         <div className="border-t border-gray-200 bg-gray-50 p-3">
           <div className="space-y-2">
-            <div className="hidden lg:grid grid-cols-4 gap-3 px-3 text-[11px] text-gray-500">
+            <div className="hidden lg:grid grid-cols-5 gap-3 px-3 text-[11px] text-gray-500">
               <Tiny>Endpoint</Tiny>
               <Tiny>Latest Block</Tiny>
               <Tiny>Finalized Block</Tiny>
+              <Tiny>Unfinalized</Tiny>
               <Tiny>Performance</Tiny>
             </div>
             <div>
@@ -100,9 +111,21 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
                     r.latest?.timestamp,
                     referenceTsMs
                   );
-                  const overThreshold =
+
+                  // Time-based threshold check
+                  const timeOverThreshold =
                     typeof lagToRefSeconds === "number" &&
                     lagToRefSeconds * 1000 > thresholdMs;
+
+                  // Block-based threshold check (if maxBlocksBehind is configured)
+                  let blockOverThreshold = false;
+                  if (maxBlocksBehind && referenceBlockNumber && r.latest?.number) {
+                    const actualBlocksBehind = Number(referenceBlockNumber - r.latest.number);
+                    blockOverThreshold = actualBlocksBehind > maxBlocksBehind;
+                  }
+
+                  const overThreshold = timeOverThreshold || blockOverThreshold;
+
                   return (
                     <RpcEndpointRow
                       key={r.url}
@@ -110,7 +133,7 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
                       explorerPrefix={explorerPrefix}
                       lagToRefSeconds={lagToRefSeconds}
                       overThreshold={overThreshold}
-                      referenceTsMs={referenceTsMs}
+                      referenceBlockNumber={referenceBlockNumber}
                     />
                   );
                 })}

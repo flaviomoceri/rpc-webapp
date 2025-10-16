@@ -11,6 +11,7 @@ export const chain = {
       "https://1rpc.io/matic",
     ],
     thresholdMs: 30_000,
+    maxBlocksBehind: 13, // ~30s at 0.43 blocks/s
     explorerPrefix: `${polygon.blockExplorers.default.url}/block/`,
     iconUrl: "https://icons-ckg.pages.dev/lz-dark/networks/polygon.svg",
     iconAlt: "Polygon",
@@ -19,6 +20,7 @@ export const chain = {
     chain: plasma,
     rpcUrls: ["https://plasma.drpc.org", "https://rpc.plasma.to"],
     thresholdMs: 10_000,
+    maxBlocksBehind: 10, // ~10s at 1 block/s
     explorerPrefix: `${plasma.blockExplorers.default.url}/block/`,
     iconUrl: "https://s2.coinmarketcap.com/static/img/coins/200x200/36645.png",
     iconAlt: "Plasma",

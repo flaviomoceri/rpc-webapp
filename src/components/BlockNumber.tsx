@@ -1,4 +1,4 @@
-import { formatTimestamp, type BlockNumberProps } from "@/lib";
+import { formatRelativeTime, type BlockNumberProps } from "@/lib";
 import { Small, Tiny } from "@/components";
 
 export function BlockNumber({
@@ -25,7 +25,7 @@ export function BlockNumber({
           <>#{number.toString()}</>
         )}
       </Small>
-      <Tiny>{hasError ? "" : formatTimestamp(timestamp)}</Tiny>
+      <Tiny>{hasError ? "" : formatRelativeTime(timestamp)}</Tiny>
     </div>
   );
 }
