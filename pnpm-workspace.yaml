@@ -1,0 +1,8 @@
+# pnpm workspace configuration
+packages:
+  - '.'
+
+# Minimum release age in minutes (1440 = 24 hours)
+# This prevents pnpm from installing packages that were published less than 24 hours ago
+# This helps avoid potentially unstable or malicious packages that haven't been vetted
+minimumReleaseAge: 1440

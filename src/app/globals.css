@@ -1,26 +1,196 @@
 @import "tailwindcss";
 
+/* Switzer Font Faces */
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Variable.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Variable.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Variable.ttf")
+      format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-VariableItalic.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-VariableItalic.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-VariableItalic.ttf")
+      format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fallback font faces for better browser support */
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Regular.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Regular.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Regular.ttf")
+      format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Medium.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Medium.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Medium.ttf")
+      format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Semibold.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Semibold.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Semibold.ttf")
+      format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Switzer";
+  src: url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Bold.woff2")
+      format("woff2"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Bold.woff")
+      format("woff"),
+    url("/Font/Switzer_Complete/Fonts/WEB/fonts/Switzer-Bold.ttf")
+      format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  /* Official usdt0.to color palette */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --primary-green: #00b988;
+  --primary-green-dark: #009973;
+  --secondary-green: #e6f7f3;
+  --accent-green: #00d4a3;
+  --white: #ffffff;
+  --black: #000000;
+  --gray: #7b7b7b;
+  --gray-light: #f5f5f5;
+  --gray-medium: #e0e0e0;
+  --gray-dark: #4a4a4a;
+  --success: #00b988;
+  --warning: #f59e0b;
+  --error: #ef4444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-primary: var(--primary-green);
+  --color-primary-dark: var(--primary-green-dark);
+  --color-secondary: var(--secondary-green);
+  --color-accent: var(--accent-green);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-white: var(--white);
+  --color-black: var(--black);
+  --color-gray: var(--gray);
+  --font-sans: "Switzer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #ffffff;
+    --gray-light: #1a1a1a;
+    --gray-medium: #333333;
+    --gray-dark: #cccccc;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+}
+
+/* Custom utility classes for usdt0.to design */
+.text-primary {
+  color: var(--primary-green);
+}
+
+.text-gray {
+  color: var(--gray);
+}
+
+.bg-primary {
+  background-color: var(--primary-green);
+}
+
+.bg-primary-dark {
+  background-color: var(--primary-green-dark);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-green);
+}
+
+.bg-gray-light {
+  background-color: var(--gray-light);
+}
+
+.border-primary {
+  border-color: var(--primary-green);
+}
+
+.border-gray {
+  border-color: var(--gray-medium);
+}
+
+.hover\:bg-primary:hover {
+  background-color: var(--primary-green);
+}
+
+.hover\:bg-primary-dark:hover {
+  background-color: var(--primary-green-dark);
+}
+
+.hover\:text-primary:hover {
+  color: var(--primary-green);
+}
+
+/* Status colors */
+.status-healthy {
+  background-color: var(--success);
+}
+
+.status-warning {
+  background-color: var(--warning);
+}
+
+.status-error {
+  background-color: var(--error);
 }
