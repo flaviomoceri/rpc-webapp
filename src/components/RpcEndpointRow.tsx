@@ -23,13 +23,13 @@ export function RpcEndpointRow({
     <div className={`bg-white rounded-md border p-3 ${containerBorderClass}`}>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
         <div className="lg:col-span-1">
-          <div className="inline-flex items-center gap-1.5 mb-1.5 text-[10px] text-gray-600 font-mono break-all">
+          <div className="flex flex-row gap-1.5 items-center">
             <div className={`w-2 h-2 rounded-full ${statusDotClass}`}></div>
             <a
               href={data.url}
               target="_blank"
               rel="noreferrer"
-              className="hover:text-primary transition-colors"
+              className="text-[10px] text-gray-600 break-all hover:text-primary transition-colors font-mono break-all"
             >
               {new URL(data.url).host}
             </a>

@@ -1,5 +1,5 @@
 import { formatRelativeTime, type BlockNumberProps } from "@/lib";
-import { Small, Tiny } from "@/components";
+import { Small } from "@/components";
 
 export function BlockNumber({
   number,
@@ -24,8 +24,12 @@ export function BlockNumber({
         ) : (
           <>#{number.toString()}</>
         )}
+        {!hasError && timestamp && (
+          <span className="text-[10px] text-gray-500 font-normal ml-1">
+            ({formatRelativeTime(timestamp)})
+          </span>
+        )}
       </Small>
-      <Tiny>{hasError ? "" : formatRelativeTime(timestamp)}</Tiny>
     </div>
   );
 }
