@@ -1,5 +1,9 @@
 import { type RpcSampleLike } from "./types";
 
+export function getStaleOpacity(isStale?: boolean): string {
+  return isStale ? "opacity-50" : "";
+}
+
 export function formatRelativeTime(ts?: bigint | number): string {
   if (!ts && ts !== 0) return "—";
   const seconds = typeof ts === "bigint" ? Number(ts) : ts;

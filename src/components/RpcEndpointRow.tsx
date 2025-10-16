@@ -1,6 +1,7 @@
 import {
   getStatusBorderClass,
   getStatusDotClass,
+  getStaleOpacity,
   type RpcEndpointRowProps,
   type Status,
 } from "@/lib";
@@ -18,6 +19,8 @@ export function RpcEndpointRow({
 
   const containerBorderClass = getStatusBorderClass(status);
   const statusDotClass = getStatusDotClass(status);
+  const isStaleOpacity = getStaleOpacity(data.isStale);
+  const overThresholdClass = overThreshold ? "text-yellow-600" : "text-primary";
 
   return (
     <div className={`bg-white rounded-md border p-3 ${containerBorderClass}`}>
@@ -42,6 +45,7 @@ export function RpcEndpointRow({
             timestamp={data.latest?.timestamp}
             hasError={hasError}
             explorerPrefix={explorerPrefix}
+            isStale={data.isStale}
           />
         </div>
 
@@ -51,6 +55,7 @@ export function RpcEndpointRow({
             timestamp={data.finalized?.timestamp}
             hasError={hasError}
             explorerPrefix={explorerPrefix}
+            isStale={data.isStale}
           />
         </div>
 
@@ -61,7 +66,7 @@ export function RpcEndpointRow({
             </div>
           ) : (
             <div>
-              <Small className="font-bold text-gray-900">
+              <Small className={`font-bold text-gray-900 ${isStaleOpacity}`}>
                 {data.latest?.number && data.finalized?.number
                   ? (data.latest.number - data.finalized.number).toString()
                   : "—"}
@@ -82,9 +87,7 @@ export function RpcEndpointRow({
                 referenceBlockNumber &&
                 data.latest?.number && (
                   <Small
-                    className={`font-medium ${
-                      overThreshold ? "text-yellow-600" : "text-primary"
-                    }`}
+                    className={`font-medium ${overThresholdClass} ${isStaleOpacity}`}
                   >
                     {Number(referenceBlockNumber - data.latest.number)} blocks (
                     {Math.round(lagToRefSeconds)}s)

@@ -19,8 +19,15 @@ import { ChevronDownIcon, RpcEndpointRow, H3, Small, Tiny } from "@/components";
 
 export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { chain, thresholdMs, maxBlocksBehind, explorerPrefix, rpcUrls, iconUrl, iconAlt } =
-    config;
+  const {
+    chain,
+    thresholdMs,
+    maxBlocksBehind,
+    explorerPrefix,
+    rpcUrls,
+    iconUrl,
+    iconAlt,
+  } = config;
 
   const rpcSamples = useRpcMonitoring(chain.id, rpcUrls);
 
@@ -34,9 +41,14 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
     [rpcSamples]
   );
 
-
   const chainStatus: Status = useMemo(
-    () => computeChainStatus(rpcSamples, referenceTsMs, thresholdMs, maxBlocksBehind),
+    () =>
+      computeChainStatus(
+        rpcSamples,
+        referenceTsMs,
+        thresholdMs,
+        maxBlocksBehind
+      ),
     [rpcSamples, referenceTsMs, thresholdMs, maxBlocksBehind]
   );
 
@@ -119,8 +131,15 @@ export function ChainSection({ config, onStatusChange }: ChainSectionProps) {
 
                   // Block-based threshold check (if maxBlocksBehind is configured)
                   let blockOverThreshold = false;
-                  if (maxBlocksBehind && referenceBlockNumber && r.latest?.number) {
-                    const actualBlocksBehind = Number(referenceBlockNumber - r.latest.number);
+                  if (
+                    maxBlocksBehind &&
+                    referenceBlockNumber &&
+                    r.latest?.number &&
+                    !r.error
+                  ) {
+                    const actualBlocksBehind = Number(
+                      referenceBlockNumber - r.latest.number
+                    );
                     blockOverThreshold = actualBlocksBehind > maxBlocksBehind;
                   }
 

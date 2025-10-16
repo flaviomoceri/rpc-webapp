@@ -20,6 +20,7 @@ export type EndpointData = {
   latest?: { number?: bigint; timestamp?: bigint };
   finalized?: { number?: bigint; timestamp?: bigint };
   error?: string;
+  isStale?: boolean;
 };
 
 export type RpcEndpointRowProps = {
@@ -46,6 +47,7 @@ export type BlockNumberProps = {
   timestamp?: bigint;
   hasError: boolean;
   explorerPrefix?: string;
+  isStale?: boolean;
 };
 
 // Typography types
@@ -71,6 +73,7 @@ export type RpcSample = {
   latest?: { number?: bigint; timestamp?: bigint };
   finalized?: { number?: bigint; timestamp?: bigint };
   error?: string;
+  isStale?: boolean;
 };
 
 // Component prop types (from components)
